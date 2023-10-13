@@ -1,0 +1,183 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.BoxLayout;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+public class Conversor {
+
+	private JFrame frame;
+	private JTextField txt;
+	private JButton btn;
+	private JComboBox cmb;
+	private JLabel lbl;
+	
+	public enum Moneda{
+		soles_dolar,
+		soles_euro,
+		soles_libra,
+		soles_yen,
+		soles_won,
+		dolar_soles,
+		euro_soles,
+		libra_soles,
+		yen_soles,
+		won_soles
+	} 
+	
+	public double dolar = 3.70;
+	public double euro = 3.97;
+	public double libra = 4.63;
+	public double yen = 0.025;
+	public double won = 0.0028;
+	
+	public double valorInput = 0.00;
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Conversor window = new Conversor();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Conversor() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		txt = new JTextField();
+		txt.setBounds(10, 11, 120, 20);
+		frame.getContentPane().add(txt);
+		txt.setColumns(10);
+		
+		cmb = new JComboBox<>();
+		cmb.setModel(new DefaultComboBoxModel<>(Moneda.values()));	
+		cmb.setBounds(10, 67, 120, 20);
+		frame.getContentPane().add(cmb);
+		
+		// Evento botón
+		btn = new JButton("Convertir");
+		btn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Convertir();
+			}
+		});
+		btn.setBounds(160, 66, 89, 23);
+		frame.getContentPane().add(btn);
+		
+		lbl = new JLabel("00.00");
+		lbl.setBounds(160, 11, 89, 20);
+		frame.getContentPane().add(lbl);
+	}
+	
+	public void Convertir() {
+		if(Validar(txt.getText())) {
+			Moneda moneda = (Moneda)cmb.getSelectedItem();
+			
+			switch (moneda) {
+			
+			case soles_dolar:
+				SolesAMoneda(dolar);
+				break;
+				
+			case soles_euro:
+				SolesAMoneda(euro);
+				break;
+				
+			case soles_libra:
+				SolesAMoneda(libra);
+				break;
+				
+			case soles_yen:
+				SolesAMoneda(yen);
+				break;
+				
+			case soles_won:
+				SolesAMoneda(won);
+				break;
+			case dolar_soles:
+				SolesAMoneda(dolar);
+				break;
+				
+			case euro_soles:
+				SolesAMoneda(euro);
+				break;
+				
+			case libra_soles:
+				SolesAMoneda(libra);
+				break;
+				
+			case yen_soles:
+				SolesAMoneda(yen);
+				break;
+				
+			case won_soles:
+				MonedaASoles(won);
+				break;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + moneda);	
+			
+		}
+
+		}
+	}
+	
+	public void SolesAMoneda(double moneda) {
+		double res = valorInput / moneda;
+		lbl.setText(Redondear(res));
+	}
+	
+	public void MonedaASoles(double moneda) {
+		double res = valorInput * moneda;
+		lbl.setText(Redondear(res));
+	}
+	
+	public String Redondear(double valor) {
+		DecimalFormat df = new DecimalFormat("0.000");
+		df.setRoundingMode(RoundingMode.HALF_UP);
+		return df.format(valor);
+	}
+	
+	public boolean Validar(String texto) {
+		try {
+			double x = Double.parseDouble(texto);
+			if(x > 0) 
+			valorInput = x;
+			return true;
+			
+		}catch(NumberFormatException e) {
+			lbl.setText("¡Solo puedes ingresar números!");
+			return false;
+		}
+	} 
+}
